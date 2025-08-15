@@ -15,7 +15,8 @@ const Navbar = () => {
       <Link to="/" className="text-2xl font-bold">Task Manager</Link>
       <div>
         {user ? (
-          <>
+          <> 
+          
             <Link to="/tasks" className="mr-4">Tasks</Link>
             <Link to="/profile" className="mr-4">Profile</Link>
             <button
