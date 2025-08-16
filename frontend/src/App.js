@@ -4,6 +4,11 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Tasks from './pages/Tasks';
+import BookSession from '.frontend/pages/BookSession';
+import MyAppointments from '.frontend/pages/MyAppointments';
+
+
+
 
 function App() {
   return (
@@ -14,6 +19,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/book" element={<BookSession />} />
+        <Route path="/appointments" element={<MyAppointments />} />
       </Routes>
     </Router>
   );
