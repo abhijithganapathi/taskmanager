@@ -1,48 +1,55 @@
 import { useState } from 'react';
+import api from '../axiosConfig';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
+import { useNavigate, Link } from 'react-router-dom';
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+export default function Login() {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const navigate = useNavigate();
+  const nav = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axiosInstance.post('/api/auth/login', formData);
-      login(response.data);
-      navigate('/tasks');
-    } catch (error) {
-      alert('Login failed. Please try again.');
+      const { data } = await api.post('/api/auth/login', form);
+      login(data);
+      nav('/');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-          Login
-        </button>
-      </form>
+    <div className="grid place-items-center">
+      <div className="w-full max-w-md bg-white rounded-2xl border shadow-sm p-6 mt-10">
+        <h1 className="text-2xl font-semibold mb-1">Login</h1>
+        <p className="text-sm text-gray-600 mb-6">Welcome back.</p>
+        <form onSubmit={onSubmit} className="space-y-3">
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            name="email" type="email" placeholder="Email" onChange={onChange}
+          />
+          <input
+            className="w-full border rounded-lg px-3 py-2"
+            name="password" type="password" placeholder="Password" onChange={onChange}
+          />
+          <button
+            className="w-full rounded-lg bg-black text-white py-2 disabled:opacity-60"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <div className="text-sm text-gray-600 mt-4">
+          No account? <Link to="/register" className="underline">Create one</Link>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Login;
+}
